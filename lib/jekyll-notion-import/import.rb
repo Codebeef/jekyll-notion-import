@@ -20,7 +20,7 @@ module Jekyll
           database.fetch.each do |page|
             Post.new(
               collection_name: database.collection_name,
-              page:
+              page: page
             ).import
           end
         end
