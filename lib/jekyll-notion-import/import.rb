@@ -20,7 +20,8 @@ module Jekyll
           database.fetch.each do |page|
             Post.new(
               collection_name: database.collection_name,
-              page:
+              page:,
+              default_front_matter: Hash(database_config["default_front_matter"])
             ).import
           end
         end
@@ -29,18 +30,18 @@ module Jekyll
       private
 
       attr_reader :config
-  
+
       def notion_token?
         return true unless ENV["NOTION_TOKEN"].blank?
-  
+
         Jekyll.logger.warn("Jekyll Notion Import:",
                            "NOTION_TOKEN not provided. Cannot read from Notion.")
         false
       end
-  
+
       def config?
         return true unless config.empty?
-  
+
         Jekyll.logger.warn("Jekyll Notion:", "No config provided.")
         false
       end

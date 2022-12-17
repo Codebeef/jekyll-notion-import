@@ -3,9 +3,10 @@
 module Jekyll
   module NotionImport
     class Post
-      def initialize(collection_name:, page:)
+      def initialize(collection_name:, page:, default_front_matter:)
         @page = page
         @collection_name = collection_name
+        @default_front_matter = default_front_matter
       end
 
       def import
@@ -20,7 +21,7 @@ module Jekyll
 
           return if file_last_updated >= page.last_edited_time
         end
-            
+
         Jekyll.logger.info("Jekyll Notion Import:", "Import #{file_name}")
 
         write_file
@@ -50,18 +51,18 @@ module Jekyll
       end
 
       def collection_directory
-        @collection_directory ||= "_#{collection_name}"        
+        @collection_directory ||= "_#{collection_name}"
       end
 
       def front_matter
         @front_matter ||= YAML.dump(
-          page.props.transform_values {|v| v.is_a?(DateTime) ? v.iso8601 : v}
+          Hash(default_front_matter).merge(page.props.transform_values {|v| v.is_a?(DateTime) ? v.iso8601 : v})
         ) + "---\n\n"
       end
 
       private
 
-      attr_reader :page, :collection_name
+      attr_reader :page, :collection_name, :default_front_matter
     end
   end
 end
